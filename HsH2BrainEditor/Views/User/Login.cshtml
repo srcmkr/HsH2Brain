@@ -1,0 +1,54 @@
+﻿@model HsH2BrainEditor.ViewModels.LoginViewModel
+@{
+    ViewData["Title"] = "Login";
+}
+
+<h1>Login / Registrierung</h1>
+
+@if (Model.Action == HsH2BrainEditor.ViewModels.ELoginAction.Error)
+{
+    <p>Diese Accountdaten sind leider nicht richtig. Bitte versuche es erneut.</p>
+}
+
+@if (Model.Action == HsH2BrainEditor.ViewModels.ELoginAction.Login || Model.Action == HsH2BrainEditor.ViewModels.ELoginAction.Error)
+{
+    if (string.IsNullOrEmpty(Model.LoginName))
+    {
+        <form asp-action="Login" asp-controller="User">
+            <div class="form-group">
+                <label>Benutzername:</label>
+                <input asp-for="LoginName" type="text" autofocus />
+            </div>
+            <input type="submit" value="Weiter" />
+        </form>
+    }
+    else
+    {
+        <p>Bitte gebe dein Kennwort ein:</p>
+        <form asp-action="Login" asp-controller="User">
+            <input type="hidden" asp-for="LoginName" />
+            <div class="form-group">
+                <label>Kennwort:</label>
+                <input asp-for="Password" type="password" autofocus />
+            </div>
+            <input type="submit" value="Login" />
+        </form>
+    }
+}
+
+@if (Model.Action == HsH2BrainEditor.ViewModels.ELoginAction.Registration)
+{
+    <p>Die Registrierung ist kostenfrei, unverbindlich und kann komplett anonym erfolgen.</p>
+    <p>Bitte beachte, dass es daher auch keine "Passwort-vergessen"-Funktion gibt.</p>
+    <p>Um dich neu zu registrieren, lege ein Kennwort fest:</p>
+    <form asp-action="Register" asp-controller="User">
+        <input type="hidden" asp-for="LoginName" />
+        <div class="form-group">
+            <label>Kennwort festlegen:</label>
+            <input asp-for="Password" type="password" autofocus />
+        </div>
+        <input type="submit" value="Registrierung" />
+    </form>
+}
+
+

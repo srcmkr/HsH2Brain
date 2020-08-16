@@ -1,7 +1,7 @@
 ﻿using HsH2Brain.Models;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 
@@ -17,55 +17,6 @@ namespace HsH2Brain.Services
             InMemoryService = service;
         }
 
-        public void SyncLocal()
-        {
-            InMemoryService.QuestionSets = new List<QuestionSetModel>
-            {
-                new QuestionSetModel
-                {
-                    Id = Guid.NewGuid(),
-                    Questions = new List<QuestionModel>
-                    {
-                        new QuestionModel
-                        {
-                            Id = Guid.NewGuid(),
-                            Bucket = 0,
-                            QuestionType = EQuestionType.SimpleText,
-                            Question = "Welche Programmiersprachen sind nativ unter iOS?",
-                            Answers = new List<AnswerModel>
-                            {
-                                new AnswerModel
-                                {
-                                    Id = Guid.NewGuid(),
-                                    AnswerText = "Swift, Objective C",
-                                    IsCorrect = true
-                                }
-                            }
-                        },
-                        new QuestionModel
-                        {
-                            Id = Guid.NewGuid(),
-                            Bucket = 0,
-                            QuestionType = EQuestionType.SimpleText,
-                            Question = "Welche technischen Ansätze existieren zur Entwicklung einer App?",
-                            Answers = new List<AnswerModel>
-                            {
-                                new AnswerModel
-                                {
-                                    Id = Guid.NewGuid(),
-                                    AnswerText = "Nativ, Hybrid (Crossplattform), WebApp",
-                                    IsCorrect = true
-                                }
-                            }
-                        }
-                    },
-                    Title = "Mobile Computing"
-                }
-            };
-
-            InMemoryService.Save();
-        }
-
         public async Task<bool> Sync()
         {
             try
@@ -74,21 +25,33 @@ namespace HsH2Brain.Services
                 var apiClient = new HttpClient();
 
                 // get content from api
-                var getAll = await apiClient.GetAsync("https://api.hsh2brain.de/");
+                var getAll = await apiClient.GetAsync("https://raw.githubusercontent.com/srcmkr/HsH2Go/master/questions.json");
 
                 // only keep on doing if code is 2xx
                 if (getAll.IsSuccessStatusCode)
                 {
                     // (try) parse content to List of QuestionSetModels
-                    var content = JsonConvert.DeserializeObject<List<QuestionSetModel>>(getAll.Content.ToString());
+                    var apiSetModels = JsonConvert.DeserializeObject<List<QuestionSetModel>>(getAll.Content.ToString());
 
                     // iterate through every parsed questionsetmodel
-                    foreach (var fromApi in content)
+                    foreach (var apiSetModel in apiSetModels)
                     {
                         // only add questionset if it doesn't exist before (to keep progress)
-                        if (!InMemoryService.QuestionSets.Exists(c => c.Id == fromApi.Id))
+                        if (!InMemoryService.QuestionSets.Exists(c => c.Id == apiSetModel.Id))
                         {
-                            InMemoryService.QuestionSets.Add(fromApi);
+                            InMemoryService.QuestionSets.Add(apiSetModel);
+                        } else
+                        {
+                            // check if there are new questions
+                            var storageSet = InMemoryService.QuestionSets.Single(c => c.Id == apiSetModel.Id);
+                            foreach(var apiQuestion in apiSetModel.Questions)
+                            {
+                                // lets add all questions which doesn't exist before
+                                if (!storageSet.Questions.Exists(c => c.Id == apiQuestion.Id))
+                                {
+                                    storageSet.Questions.Add(apiQuestion);
+                                }
+                            }
                         }
                     }
 

@@ -54,8 +54,6 @@ namespace HsH2Brain
             }
             else
             {
-                // indev: inject predefined set
-                SyncService.SyncLocal();
                 CrossToastPopUp.Current.ShowToastMessage("Sync fehlgeschlagen");
             }
                 

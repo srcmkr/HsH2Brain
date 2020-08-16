@@ -2,7 +2,6 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace HsH2Brain.Models
 {
@@ -30,7 +29,7 @@ namespace HsH2Brain.Models
             }
         }
 
-        [NotMapped, BsonIgnore] public List<QuestionModel> Questions { get; set; }
+        [BsonIgnore] public List<QuestionModel> Questions { get; set; }
 
         public QuestionSetModel()
         {
