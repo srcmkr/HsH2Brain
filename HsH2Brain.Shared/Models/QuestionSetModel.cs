@@ -13,6 +13,9 @@ namespace HsH2Brain.Models
         // name of the question set e.g. "Mobile Computing"
         public string Title { get; set; }
 
+        // Author of this question set
+        public Guid AuthorId { get; set; }
+
         // store to avoid multiple tables serialized
         public string QuestionsSerialized 
         { 

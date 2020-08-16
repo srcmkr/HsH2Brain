@@ -1,0 +1,23 @@
+﻿@model HsH2BrainEditor.ViewModels.MyQuizzesViewModel
+@{
+    ViewData["Title"] = "MyQuiz";
+}
+
+<a asp-action="AddQuiz" asp-controller="User" class="btn btn-primary float-right">Neues Quiz erstellen</a>
+<h1>Meine Quizze</h1>
+
+@if(Model.QuizSets.Count() == 0)
+{
+    <p>Du hast bisher keine Quizze angelegt. Warum erstellst du nicht einfach eines?</p>
+} else
+{
+    <ul>
+        @foreach (var quiz in Model.QuizSets)
+        {
+            <li>
+                <a asp-action="EditQuiz" asp-controller="User" asp-route-id="@quiz.Id">@quiz.Title</a>
+            </li>
+        }
+    </ul>
+}
+

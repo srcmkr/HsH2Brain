@@ -1,0 +1,14 @@
+﻿@model HsH2BrainEditor.ViewModels.QuizViewModel
+@{
+    ViewData["Title"] = "AddQuiz";
+}
+
+<h1>Neues Quiz erstellen</h1>
+<form asp-action="AddQuiz" asp-controller="User">
+    <div class="form-group">
+        <label>Name des Quiz</label><br />
+        <input asp-for="Quiz.Title" />
+    </div>
+    <input type="submit" value="Speichern &amp; Weiter" />
+</form>
+
