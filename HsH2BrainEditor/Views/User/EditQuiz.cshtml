@@ -1,0 +1,50 @@
+﻿@model HsH2BrainEditor.ViewModels.QuizViewModel
+@{
+    ViewData["Title"] = "Quiz editieren";
+}
+
+<h1>Quiz bearbeiten</h1>
+
+<form asp-action="EditQuiz" asp-controller="User">
+    <input type="hidden" asp-for="Quiz.Id" />
+    <div class="form-group">
+        <label>Name des Quiz</label>
+        <div class="input-group">
+            <input asp-for="Quiz.Title" class="form-control" />
+            <input type="submit" value="Änderungen speichern" class="btn btn-primary" />
+        </div>
+    </div>
+</form>
+
+<form asp-action="AddQuestion" asp-controller="User">
+    <input type="hidden" asp-for="Quiz.Id" />
+    <table class="table table-bordered">
+        <tr>
+            <th>Frage</th>
+            <th>Antwort</th>
+            <th>Optionen</th>
+        </tr>
+        <tr>
+            <td>
+                <textarea class="form-control" asp-for="NewQuestion.Question" placeholder="Frage"></textarea>
+            </td>
+            <td>
+                <textarea class="form-control" asp-for="NewQuestion.Answer" placeholder="Antwort"></textarea><br />
+            </td>
+            <td>
+                <input type="submit" value="Frage hinzufügen" class="btn btn-primary" />
+            </td>
+        </tr>
+        @foreach (var question in Model.Quiz.Questions)
+        {
+            <tr>
+                <td>@question.Question</td>
+                <td>@question.Answer</td>
+                <td>
+                    <a asp-action="EditQuestion" asp-controller="User" asp-route-id="@question.Id" class="btn btn-warning"><strike>Editieren</strike></a>
+                    <a asp-action="DeleteQuestion" asp-controller="User" asp-route-quizId="@Model.Quiz.Id" asp-route-questionId="@question.Id" class="btn btn-danger">Löschen</a>
+                </td>
+            </tr>
+        }
+    </table>
+</form>

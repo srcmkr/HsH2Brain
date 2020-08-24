@@ -39,34 +39,59 @@ namespace HsH2BrainEditor.Controllers
         }
 
         [HttpPost]
+        public IActionResult EditQuiz(QuizViewModel vm)
+        {
+            var quizService = new QuestionService(CurrentUser.Id);
+            quizService.UpdateTitle(vm.Quiz.Id, vm.Quiz.Title);
+            return RedirectToAction("EditQuiz", "User", new { id = vm.Quiz.Id });
+        }
+
+        [HttpPost]
+        public IActionResult AddQuestion(QuizViewModel vm)
+        {
+            var quizService = new QuestionService(CurrentUser.Id);
+            quizService.InsertQuestion(vm.Quiz.Id, vm.NewQuestion);
+            return RedirectToAction("EditQuiz", "User", new { id = vm.Quiz.Id });
+        }
+
+        [HttpPost]
         public IActionResult AddQuiz(QuizViewModel vm)
         {
             if (string.IsNullOrWhiteSpace(vm.Quiz.Title)) return RedirectToAction("AddQuiz");
-            var quizService = new QuestionService();
-            var quizId = quizService.Insert(vm.Quiz.Title, CurrentUser.Id);
+            var quizService = new QuestionService(CurrentUser.Id);
+            var quizId = quizService.Insert(vm.Quiz.Title);
             return RedirectToAction("EditQuiz", "User", new { id = quizId } );
         }
 
         [HttpGet]
         public IActionResult EditQuiz(Guid id)
         {
-            var questionService = new QuestionService();
+            var questionService = new QuestionService(CurrentUser.Id);
 
             var vm = new QuizViewModel
             {
                 CurrentUser = CurrentUser,
-                Quiz = questionService.Load(CurrentUser.Id, id)
+                Quiz = questionService.Load(id)
             };
 
             return View(vm);
         }
 
         [HttpGet]
+        public IActionResult DeleteQuestion(Guid quizId, Guid questionId)
+        {
+            if (CurrentUser == null) return RedirectToAction("Login", "User");
+            var quizService = new QuestionService(CurrentUser.Id);
+            quizService.Delete(questionId, quizId);
+            return RedirectToAction("EditQuiz", "User", new { id = quizId });
+        }
+
+        [HttpGet]
         public IActionResult MyQuiz()
         {
             if (CurrentUser == null) return RedirectToAction("Login", "User");
-            var quizService = new QuestionService();
-            var myQuizzes = quizService.Load(CurrentUser.Id);
+            var quizService = new QuestionService(CurrentUser.Id);
+            var myQuizzes = quizService.Load();
 
             var vm = new MyQuizzesViewModel
             {

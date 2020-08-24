@@ -1,5 +1,8 @@
-﻿using HsH2Brain.Models;
+﻿using Acr.UserDialogs;
+using HsH2Brain.Dto;
+using HsH2Brain.Models;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
@@ -25,7 +28,16 @@ namespace HsH2Brain.Services
                 var apiClient = new HttpClient();
 
                 // get content from api
-                var getAll = await apiClient.GetAsync("https://raw.githubusercontent.com/srcmkr/HsH2Go/master/questions.json");
+                var loginDto = new LoginDto();
+
+                var userNameTask = await UserDialogs.Instance.PromptAsync("Dein Benutzername:", "Login");
+                loginDto.Username = userNameTask.Value;
+
+                var passwordTask = await UserDialogs.Instance.PromptAsync("Dein Kennwort:", "Login", null, null, null, InputType.Password);
+                loginDto.Password = passwordTask.Value;
+
+                var content = new StringContent(JsonConvert.SerializeObject(loginDto), System.Text.Encoding.UTF8, "application/json");
+                var getAll = await apiClient.PostAsync("https://localhost:5001/api/quiz/", content);
 
                 // only keep on doing if code is 2xx
                 if (getAll.IsSuccessStatusCode)

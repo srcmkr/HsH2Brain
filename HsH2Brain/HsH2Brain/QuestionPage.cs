@@ -181,7 +181,7 @@ namespace HsH2Brain
             else
             {
                 BackSideShown = true;
-                TextLabel.Text = CurrentQuestion.Answers.First().AnswerText;
+                TextLabel.Text = CurrentQuestion.Answer;
             }
                 
         }
