@@ -5,7 +5,7 @@ using Xamarin.Forms;
 
 namespace HsH2Brain
 {
-    public partial class App : Application
+    public partial class App
     {
         public InMemoryService Services { get; set; }
         public SyncService SyncService { get; set; }
@@ -20,6 +20,7 @@ namespace HsH2Brain
             // inject IMS from the very top (giving down to, might be replaced with a singleton in the future)
             Services = new InMemoryService();
             SyncService = new SyncService(Services);
+
             // load data
             Services.Load();
 
@@ -48,15 +49,13 @@ namespace HsH2Brain
             // wait to have it synced
             var success = await SyncService.Sync();
 
+            CrossToastPopUp.Current.ShowToastMessage(success ? "Sync komplett" : "Sync fehlgeschlagen");
+
             if (success)
             {
-                CrossToastPopUp.Current.ShowToastMessage("Sync komplett");
+                await MainPage.Navigation.PopAsync();
+                await MainPage.Navigation.PushAsync(new MainPage(Services));
             }
-            else
-            {
-                CrossToastPopUp.Current.ShowToastMessage("Sync fehlgeschlagen");
-            }
-                
 
             SyncButton.Text = "Sync";
             SyncButton.IsEnabled = true;

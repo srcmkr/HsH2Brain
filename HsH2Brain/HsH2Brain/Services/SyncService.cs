@@ -1,12 +1,12 @@
-﻿using Acr.UserDialogs;
+﻿using System;
+using Acr.UserDialogs;
 using HsH2Brain.Dto;
-using HsH2Brain.Models;
 using Newtonsoft.Json;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using HsH2Brain.Shared.Models;
 
 namespace HsH2Brain.Services
 {
@@ -30,20 +30,26 @@ namespace HsH2Brain.Services
                 // get content from api
                 var loginDto = new LoginDto();
 
+                // get username
                 var userNameTask = await UserDialogs.Instance.PromptAsync("Dein Benutzername:", "Login");
                 loginDto.Username = userNameTask.Value;
 
+                // get password
                 var passwordTask = await UserDialogs.Instance.PromptAsync("Dein Kennwort:", "Login", null, null, null, InputType.Password);
                 loginDto.Password = passwordTask.Value;
 
+                // submit to api and get response
                 var content = new StringContent(JsonConvert.SerializeObject(loginDto), System.Text.Encoding.UTF8, "application/json");
-                var getAll = await apiClient.PostAsync("https://localhost:5001/api/quiz/", content);
+                var getAll = await apiClient.PostAsync("https://hsh2brain.privacy.ltd/api/", content);
 
                 // only keep on doing if code is 2xx
                 if (getAll.IsSuccessStatusCode)
                 {
+                    // read response
+                    var apiContent = await getAll.Content.ReadAsStringAsync();
+
                     // (try) parse content to List of QuestionSetModels
-                    var apiSetModels = JsonConvert.DeserializeObject<List<QuestionSetModel>>(getAll.Content.ToString());
+                    var apiSetModels = JsonConvert.DeserializeObject<List<QuestionSetModel>>(apiContent);
 
                     // iterate through every parsed questionsetmodel
                     foreach (var apiSetModel in apiSetModels)
@@ -77,9 +83,10 @@ namespace HsH2Brain.Services
                 // something went wrong, maybe no internet or api down
                 return false;
             }
-            catch
+            catch (Exception ex)
             {
                 // something went *really* wrong, but it doesn't matter tho ¯\_(ツ)_/¯
+                Console.WriteLine("Error while fetching data: ", ex);
                 return false;
             }
         }

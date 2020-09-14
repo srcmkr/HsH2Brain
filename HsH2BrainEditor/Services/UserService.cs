@@ -9,17 +9,12 @@ namespace HsH2BrainEditor.Services
         public UserModel Login(string username, string password)
         {
             var sanitizedUsername = username.ToLower().Trim();
-            using (var db = new LiteDatabase("hsh2go.db"))
-            {
-                var col = db.GetCollection<UserModel>("users");
-                var potentialUser = col.FindOne(c => c.Username == sanitizedUsername);
-                if (potentialUser == null) return null;
+            using var db = new LiteDatabase("hsh2go.db");
+            var col = db.GetCollection<UserModel>("users");
+            var potentialUser = col.FindOne(c => c.Username == sanitizedUsername);
+            if (potentialUser == null) return null;
 
-                if (CryptoHelper.Crypto.VerifyHashedPassword(potentialUser.Password, password))
-                    return potentialUser;
-
-                return null;
-            }
+            return CryptoHelper.Crypto.VerifyHashedPassword(potentialUser.Password, password) ? potentialUser : null;
         }
 
         public string SelectUser(string username)
@@ -30,34 +25,29 @@ namespace HsH2BrainEditor.Services
         public UserModel SelectUserObject(string username)
         {
             var sanitizedUsername = username.ToLower().Trim();
-            using (var db = new LiteDatabase("hsh2go.db"))
-            {
-                var col = db.GetCollection<UserModel>("users");
-                var potentialUser = col.FindOne(c => c.Username == sanitizedUsername);
-                if (potentialUser == null) return null;
+            using var db = new LiteDatabase("hsh2go.db");
+            var col = db.GetCollection<UserModel>("users");
+            var potentialUser = col.FindOne(c => c.Username == sanitizedUsername);
 
-                return potentialUser;
-            }
+            return potentialUser;
         }
 
         public bool Register(string username, string password)
         {
             var sanitizedUsername = username.ToLower().Trim();
-            using (var db = new LiteDatabase("hsh2go.db"))
+            using var db = new LiteDatabase("hsh2go.db");
+            var col = db.GetCollection<UserModel>("users");
+            var potentialUser = col.FindOne(c => c.Username == sanitizedUsername);
+            if (potentialUser != null) return false;
+
+            col.Insert(new UserModel
             {
-                var col = db.GetCollection<UserModel>("users");
-                var potentialUser = col.FindOne(c => c.Username == sanitizedUsername);
-                if (potentialUser != null) return false;
+                Id = Guid.NewGuid(),
+                Username = sanitizedUsername,
+                Password = CryptoHelper.Crypto.HashPassword(password)
+            });
 
-                col.Insert(new UserModel
-                {
-                    Id = Guid.NewGuid(),
-                    Username = sanitizedUsername,
-                    Password = CryptoHelper.Crypto.HashPassword(password)
-                });
-
-                return true;
-            }
+            return true;
         }
     }
 }

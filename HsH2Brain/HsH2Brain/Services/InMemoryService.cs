@@ -1,8 +1,8 @@
-﻿using HsH2Brain.Models;
-using LiteDB;
+﻿using LiteDB;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HsH2Brain.Shared.Models;
 using Xamarin.Essentials;
 
 namespace HsH2Brain.Services

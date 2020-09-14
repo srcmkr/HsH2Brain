@@ -1,9 +1,9 @@
-﻿using LiteDB;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using LiteDB;
+using Newtonsoft.Json;
 
-namespace HsH2Brain.Models
+namespace HsH2Brain.Shared.Models
 {
     public class QuestionSetModel
     {
@@ -17,12 +17,10 @@ namespace HsH2Brain.Models
         public Guid AuthorId { get; set; }
 
         // store to avoid multiple tables serialized
+        [JsonIgnore]
         public string QuestionsSerialized 
         { 
-            get
-            {
-                return JsonConvert.SerializeObject(Questions);
-            }
+            get => JsonConvert.SerializeObject(Questions);
             set
             {
                 if (value != null && value != "null" && value != string.Empty)

@@ -1,5 +1,5 @@
-﻿using HsH2Brain.Models;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using HsH2Brain.Shared.Models;
 
 namespace HsH2BrainEditor.ViewModels
 {

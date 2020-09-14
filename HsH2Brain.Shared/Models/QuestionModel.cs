@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HsH2Brain.Models
+namespace HsH2Brain.Shared.Models
 {
     public class QuestionModel
     {

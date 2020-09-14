@@ -1,13 +1,14 @@
-﻿using HsH2Brain.Models;
-using HsH2Brain.Services;
+﻿using HsH2Brain.Services;
 using System;
+using HsH2Brain.Shared.Models;
+using Xamarin.Essentials;
 using Xamarin.Forms;
 
 namespace HsH2Brain
 {
-    public partial class MainPage : ContentPage
+    public partial class MainPage
     {
-        private InMemoryService Services { get; set; }
+        private InMemoryService Services { get; }
 
         public MainPage(InMemoryService services)
         {
@@ -28,15 +29,68 @@ namespace HsH2Brain
                 contentLayout.Children.Add(CreateSetCard(questionSet));
             }
 
+            if (Services.QuestionSets.Count == 0)
+            {
+                contentLayout.Children.Add(CreateEmptyCard());
+            }
+
             // wrap everything in a scroll view and make it pretty ╰(*°▽°*)╯
             Content = new ScrollView
             {
                 Content = contentLayout,
-                BackgroundColor = Color.LightGray,
+                BackgroundColor = Color.LightBlue,
                 Padding = 10
             };
         }
 
+        // Creates frame if there are no quiz models on device (needs sync)
+        private Frame CreateEmptyCard()
+        {
+            // frames have shadows \o/
+            var contentFrame = new Frame
+            {
+                HasShadow = true,
+                CornerRadius = 15,
+                BackgroundColor = Color.White,
+                Margin = new Thickness(5, 5)
+            };
+
+            // make stack layout horizontal, could use grid, but no need
+            var stackLayout = new StackLayout
+            {
+                Orientation = StackOrientation.Horizontal
+            };
+
+            // card label
+            var captionLabel = new Label
+            {
+                Text = "Keine Sets gefunden 🤔\r\nDrücke Sync oder registriere Dich - kostenlos und unverbindlich",
+                TextColor = Color.DarkGray,
+                FontSize = 16,
+                HorizontalOptions = LayoutOptions.FillAndExpand,
+                VerticalTextAlignment = TextAlignment.Center,
+            };
+
+            stackLayout.Children.Add(captionLabel);
+
+            // take quiz button
+            var button = new Button
+            {
+                Text = "Registrieren",
+                CornerRadius = 5,
+                BackgroundColor = Color.DarkMagenta,
+                TextColor = Color.White
+            };
+
+            button.Clicked += (s, e) => { Launcher.TryOpenAsync(new Uri("https://hsh2brain.privacy.ltd/")); };
+
+            // wrap up and return
+            stackLayout.Children.Add(button);
+            contentFrame.Content = stackLayout;
+            return contentFrame;
+        }
+
+        // creates Cards for quiz sets
         private Frame CreateSetCard(QuestionSetModel set)
         {
             // frames have shadows \o/
@@ -69,7 +123,7 @@ namespace HsH2Brain
             // take quiz button
             var button = new Button
             {
-                Text = string.Format("{0} Fragen", set.Questions.Count),
+                Text = $"{set.Questions.Count} Fragen",
                 CornerRadius = 5,
                 BackgroundColor = Color.DarkMagenta,
                 TextColor = Color.White

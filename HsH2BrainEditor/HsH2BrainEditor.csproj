@@ -21,4 +21,10 @@
     <ProjectReference Include="..\HsH2Brain\HsH2Brain\HsH2Brain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="wwwroot\hsh2brain.apk">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

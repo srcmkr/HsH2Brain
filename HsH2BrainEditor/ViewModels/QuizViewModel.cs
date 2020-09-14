@@ -1,4 +1,4 @@
-﻿using HsH2Brain.Models;
+﻿using HsH2Brain.Shared.Models;
 
 namespace HsH2BrainEditor.ViewModels
 {

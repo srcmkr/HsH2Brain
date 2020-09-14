@@ -1,10 +1,10 @@
-﻿using HsH2Brain.Models;
-using HsH2BrainEditor.Services;
+﻿using HsH2BrainEditor.Services;
 using HsH2BrainEditor.ViewModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System;
+using HsH2Brain.Shared.Models;
 
 namespace HsH2BrainEditor.Controllers
 {
