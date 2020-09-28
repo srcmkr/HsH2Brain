@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using HsH2Brain.Models;
 using HsH2Brain.Shared.Models;
 using Xamarin.Essentials;
 
@@ -17,6 +18,9 @@ namespace HsH2Brain.Services
 
         // different from platform to platform
         private string Databasepath { get; set; }
+
+        // device user
+        public UserModel DeviceUser { get; set; }
 
         // ctor
         public InMemoryService()
@@ -50,6 +54,10 @@ namespace HsH2Brain.Services
                 // get settings
                 var settingsCol = db.GetCollection<SettingsModel>("settings");
                 Settings = settingsCol.FindOne(c => true);
+
+                // get user
+                var userCol = db.GetCollection<UserModel>("user");
+                DeviceUser = userCol.FindOne(c => true);
             }
 
             // fallback: if it's null (because there is no entry yet): create some
@@ -67,6 +75,11 @@ namespace HsH2Brain.Services
 
                 var settingsCol = db.GetCollection<SettingsModel>("settings");
                 settingsCol.Upsert(Settings);
+
+                if (DeviceUser == null) return;
+
+                var userCol = db.GetCollection<UserModel>("user");
+                userCol.Upsert(DeviceUser);
             }
         }
     }

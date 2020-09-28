@@ -9,7 +9,7 @@ namespace HsH2BrainEditor.Controllers
     public class ApiController : ControllerBase
     {
         [HttpPost("/api/")]
-        public JsonResult Index([FromBody]LoginDto dto)
+        public IActionResult Index([FromBody]LoginDto dto)
         {
             if (string.IsNullOrEmpty(dto.Username) || string.IsNullOrEmpty(dto.Password))
                 return new JsonResult(new List<QuestionSetModel>());
@@ -17,7 +17,7 @@ namespace HsH2BrainEditor.Controllers
             var userService = new UserService();
 
             var currentUser = userService.Login(dto.Username, dto.Password);
-            if (currentUser == null) return new JsonResult(new List<QuestionSetModel>());
+            if (currentUser == null) return new UnauthorizedResult();
 
             var questionService = new QuestionService(currentUser.Id);
             var myQuestions = questionService.Load();

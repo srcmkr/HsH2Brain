@@ -20,23 +20,19 @@ namespace HsH2Brain.Services
             InMemoryService = service;
         }
 
-        public async Task<bool> Sync()
+        public async Task<bool> Sync(string username, string password)
         {
             try
             {
                 // init new HttpClient
                 var apiClient = new HttpClient();
 
-                // get content from api
-                var loginDto = new LoginDto();
-
-                // get username
-                var userNameTask = await UserDialogs.Instance.PromptAsync("Dein Benutzername:", "Login");
-                loginDto.Username = userNameTask.Value;
-
-                // get password
-                var passwordTask = await UserDialogs.Instance.PromptAsync("Dein Kennwort:", "Login", null, null, null, InputType.Password);
-                loginDto.Password = passwordTask.Value;
+                // prepare user login with parameters (come from localstorage)
+                var loginDto = new LoginDto
+                {
+                    Username = username,
+                    Password = password
+                };
 
                 // submit to api and get response
                 var content = new StringContent(JsonConvert.SerializeObject(loginDto), System.Text.Encoding.UTF8, "application/json");

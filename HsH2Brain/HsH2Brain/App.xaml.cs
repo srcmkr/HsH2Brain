@@ -1,6 +1,7 @@
 ﻿using HsH2Brain.Services;
 using Plugin.Toast;
 using System;
+using HsH2Brain.Models;
 using Xamarin.Forms;
 
 namespace HsH2Brain
@@ -9,8 +10,7 @@ namespace HsH2Brain
     {
         public InMemoryService Services { get; set; }
         public SyncService SyncService { get; set; }
-
-        private ToolbarItem SyncButton { get; set; }
+        public ToolbarItem SyncButton { get; set; }
 
         public App()
         {
@@ -27,16 +27,25 @@ namespace HsH2Brain
             // init mainpage
             MainPage = new NavigationPage();
 
-            // add sync button
-            SyncButton = new ToolbarItem
+            // add login/logout button
+            if (Services.DeviceUser == null)
             {
-                Text = "Sync"
-            };
+                SyncButton = new ToolbarItem
+                {
+                    Text = "Login"
+                };
+            }
+            else
+            {
+                SyncButton = new ToolbarItem
+                {
+                    Text = "Sync"
+                };
+            }
 
             SyncButton.Clicked += StartSync;
 
             MainPage.ToolbarItems.Add(SyncButton);
-
 
             MainPage.Navigation.PushAsync(new MainPage(Services));
         }
@@ -46,10 +55,19 @@ namespace HsH2Brain
             SyncButton.IsEnabled = false;
             SyncButton.Text = "Lade...";
 
-            // wait to have it synced
-            var success = await SyncService.Sync();
+            // call login dialog until login is successful
+            if (Services.DeviceUser == null)
+            {
+                SyncButton.IsEnabled = true;
+                SyncButton.Text = "Login";
+                await MainPage.Navigation.PushModalAsync(new LoginPage(this));
+                return;
+            }
 
-            CrossToastPopUp.Current.ShowToastMessage(success ? "Sync komplett" : "Sync fehlgeschlagen");
+            // wait to have it synced
+            var success = await SyncService.Sync(Services.DeviceUser.Username, Services.DeviceUser.Password);
+
+            CrossToastPopUp.Current.ShowToastMessage(success ? "Synchronisierung erfolgreich" : "Synchronisierung fehlgeschlagen");
 
             if (success)
             {

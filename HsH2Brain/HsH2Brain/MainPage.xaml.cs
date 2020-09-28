@@ -64,7 +64,7 @@ namespace HsH2Brain
             // card label
             var captionLabel = new Label
             {
-                Text = "Keine Sets gefunden 🤔\r\nDrücke Sync oder registriere Dich - kostenlos und unverbindlich",
+                Text = "Keine Sets gefunden 🤔\r\nDrücke Login oder registriere Dich - kostenlos und unverbindlich",
                 TextColor = Color.DarkGray,
                 FontSize = 16,
                 HorizontalOptions = LayoutOptions.FillAndExpand,
@@ -82,7 +82,7 @@ namespace HsH2Brain
                 TextColor = Color.White
             };
 
-            button.Clicked += (s, e) => { Launcher.TryOpenAsync(new Uri("https://hsh2brain.privacy.ltd/")); };
+            button.Clicked += (s, e) => { Launcher.TryOpenAsync(new Uri("https://hsh2brain.privacy.ltd/User/Login")); };
 
             // wrap up and return
             stackLayout.Children.Add(button);

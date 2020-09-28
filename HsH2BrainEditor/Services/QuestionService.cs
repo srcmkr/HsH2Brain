@@ -21,7 +21,7 @@ namespace HsH2BrainEditor.Services
 
             using var db = new LiteDatabase("hsh2go.db");
             var col = db.GetCollection<QuestionSetModel>();
-            return col.Find(c => c.AuthorId == UserGuid).ToList();
+            return col.Find(c => c.AuthorId == UserGuid || c.AuthorId == Guid.Empty).ToList();
         }
 
         public QuestionSetModel Load(Guid quizId)
@@ -30,7 +30,7 @@ namespace HsH2BrainEditor.Services
 
             using var db = new LiteDatabase("hsh2go.db");
             var col = db.GetCollection<QuestionSetModel>();
-            return col.Find(c => c.Id == quizId && c.AuthorId == UserGuid).FirstOrDefault();
+            return col.Find(c => c.Id == quizId && (c.AuthorId == UserGuid || c.AuthorId == Guid.Empty)).FirstOrDefault();
         }
 
         public Guid Insert(string title)
