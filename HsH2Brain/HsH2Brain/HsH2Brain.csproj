@@ -12,7 +12,7 @@
 
   <ItemGroup>
     <PackageReference Include="Acr.UserDialogs" Version="7.1.0.446" />
-    <PackageReference Include="LiteDB" Version="5.0.9" />
+    <PackageReference Include="LiteDB" Version="5.0.13" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.2" />
     <PackageReference Include="Plugin.Toast" Version="2.1.2" />
     <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
